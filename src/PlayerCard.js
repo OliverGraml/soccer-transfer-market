@@ -1,6 +1,8 @@
+import styled from 'styled-components/macro';
+
 export default function PlayerCard({player}) {
   return (
-    <article>
+    <Card>
       <h3>{player.name}</h3>
       <p>{player.price}</p>
       <p>{player.club}</p>
@@ -8,14 +10,15 @@ export default function PlayerCard({player}) {
       <p>
         <a href={`mailto:${player.email}`}>{player.email}</a>
       </p>
-    </article>
+    </Card>
   );
 }
 
-const Card = styled.articel`
-  background: lightgreen;
+const Card = styled.article`
+  background-color: lightgreen;
   border-radius: 0.4rem;
-  color: green;
+  border: 1px solid darkgreen;
+  color: brown;
   padding: 1.2rem 1rem;
   height: 12rem;
   min-width: calc((100% - 2rem) / 3);
@@ -29,6 +32,6 @@ const Card = styled.articel`
   }
 
   a {
-    color: green;
+    color: darkgreen;
   }
 `;
