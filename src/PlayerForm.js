@@ -1,5 +1,7 @@
 import styled from 'styled-components/macro';
 import {useState} from 'react';
+import Tags from './Tags';
+import validatePlayer from './lib/validation';
 
 export default function PlayerForm({onAddPlayer}) {
   //function App() {
@@ -10,9 +12,11 @@ export default function PlayerForm({onAddPlayer}) {
     club: '',
     position: '',
     email: '',
+    skills: [],
   };
 
   const [player, setPlayer] = useState(initialPlayerState);
+  const [isError, setIsError] = useState(false);
 
   function updatePlayer(event) {
     const fieldName = event.target.name;
@@ -27,11 +31,28 @@ export default function PlayerForm({onAddPlayer}) {
 
   function handleFormSubmit(event) {
     event.preventDefault();
-    onAddPlayer(player);
+
+    if (validatePlayer(player)) {
+      onAddPlayer(player);
+      setPlayer(initialPlayerState);
+      setIsError(false);
+    } else {
+      setIsError(true);
+    }
+  }
+
+  function updateSkills(newSkill) {
+    setPlayer({...player, skills: [...player.skills, newSkill.toUpperCase()]});
+  }
+
+  function removeTag(removeTag) {
+    const remainingItems = player.skills.filter((skill) => skill !== removeTag);
+    setPlayer({...player, skills: [...remainingItems]});
   }
 
   return (
     <Form onSubmit={handleFormSubmit}>
+      {isError && <ErrorBox>You have an error in your form.</ErrorBox>}
       <label>Player name</label>
       <input
         type="text"
@@ -59,7 +80,7 @@ export default function PlayerForm({onAddPlayer}) {
 
       <label htmlFor="club">Club</label>
       <select id="club" name="club" onChange={updatePlayer} value={player.club}>
-        <option value="fc_bayern"> ---Please Select a Club--- </option>
+        <option value="select"> ---Please Select a Club--- </option>
         <option value="fc_bayern">FC Bayern München</option>
         <option value="sv_werder">SV Werder Bremen</option>
         <option value="vfb_stuttgart">VfV Stuttgart</option>
@@ -100,7 +121,11 @@ export default function PlayerForm({onAddPlayer}) {
         />{' '}
         Goalie
       </Position>
-
+      <Tags
+        onRemoveTag={removeTag}
+        onUpdateTags={updateSkills}
+        tags={player.skills}
+      />
       <label htmlFor="email">Contact (email)</label>
       <input type="text" name="email" onChange={updatePlayer} />
       <Buttons>
@@ -147,4 +172,9 @@ const Button = styled.button`
   font-size: 1.2rem;
   gap: 0.5rem;
   width: 10rem;
+`;
+
+const ErrorBox = styled.div`
+  background: hsl(340, 60%, 50%);
+  padding: 1rem;
 `;

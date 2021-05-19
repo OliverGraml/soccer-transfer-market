@@ -1,17 +1,39 @@
 import styled from 'styled-components/macro';
 
 export default function PlayerCard({player}) {
-  return (
-    <Card>
-      <h3>{player.name}</h3>
-      <p>{player.price}</p>
-      <p>{player.club}</p>
-      <p>{player.position}</p>
-      <p>
-        <a href={`mailto:${player.email}`}>{player.email}</a>
-      </p>
-    </Card>
-  );
+  /*   switch (player.club) {
+    case 'fc_bayern' :
+      return 'FC Bayern München';
+    case 'man_city' : 
+      return 'Manchester City';
+  } */
+  if (player.name.length > 0 || player.price.length > 0) {
+    return (
+      <Card>
+        <h3>{player.name.toUpperCase()}</h3>
+        <p>{player.price}</p>
+        <p>{player.club}</p>
+        <p>{player.position}</p>
+        <p>
+          {player.skills.map((skill) => (
+            <span>{skill} </span>
+          ))}
+        </p>
+        <p>
+          <a href={`mailto:${player.email}`}>{player.email}</a>
+        </p>
+      </Card>
+    );
+  } else {
+    return (
+      <Card>
+        <h3>Max Mustermann</h3>
+        <p>999.999,99</p>
+        <p>FC Ballsport</p>
+        <p>Libero</p>
+      </Card>
+    );
+  }
 }
 
 const Card = styled.article`
