@@ -1,6 +1,7 @@
 import styled from 'styled-components/macro';
+import soccerBall from './Images/soccerBall.png';
 
-export default function PlayerCard({player}) {
+export default function PlayerCard({player, onAddToShoppingCart}) {
   /*   switch (player.club) {
     case 'fc_bayern' :
       return 'FC Bayern München';
@@ -9,7 +10,10 @@ export default function PlayerCard({player}) {
   } */
   return (
     <Card>
-      <h3>{player.name.toUpperCase()}</h3>
+      <TopWrapper>
+        <h3>{player.name.toUpperCase()}</h3>
+        <Img src={soccerBall} alt="" onClick={onAddToShoppingCart} />
+      </TopWrapper>
       <p>{player.price}</p>
       <p>{player.club}</p>
       <p>{player.position}</p>
@@ -30,7 +34,7 @@ const Card = styled.article`
   border-radius: 0.4rem;
   border: 1px solid darkgreen;
   color: brown;
-  padding: 1.2rem 1rem;
+  padding: 0.1rem 1rem 1.2rem 1rem;
   height: 12rem;
   min-width: calc((100% - 2rem) / 3);
 
@@ -45,4 +49,19 @@ const Card = styled.article`
   a {
     color: darkgreen;
   }
+`;
+const Img = styled.img`
+  width: 3rem;
+  cursor: pointer;
+  margin: 0;
+
+  :hover {
+    opacity: 50%;
+  }
+`;
+
+const TopWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
 `;

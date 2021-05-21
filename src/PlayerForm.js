@@ -13,6 +13,7 @@ export default function PlayerForm({onAddPlayer}) {
     position: '',
     email: '',
     skills: [],
+    sold: 'false',
   };
 
   const [player, setPlayer] = useState(initialPlayerState);

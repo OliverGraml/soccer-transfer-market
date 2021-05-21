@@ -1,11 +1,17 @@
+import React from 'react';
 import styled from 'styled-components/macro';
 import {useEffect, useState} from 'react';
 import PlayerForm from './PlayerForm';
 import PlayerCard from './PlayerCard';
 import {saveToLocal, loadFromLocal} from './lib/localStorage';
+import HeaderNavgation from './HeaderNavigation';
+import {Switch, Route} from 'react-router-dom';
+import ShoppingCart from './ShoppingCart';
+import PlayerCardsOnly from './PlayerCardsOnly';
 
 function App() {
   const [players, setPlayers] = useState(loadFromLocal('players') ?? []);
+  const [shoppingCart, setShoppingCart] = useState([]);
 
   useEffect(() => {
     saveToLocal('players', players);
@@ -15,17 +21,50 @@ function App() {
     setPlayers([...players, player]);
   }
 
+  function addToShoppingCart(playerToCart) {
+    setShoppingCart([...shoppingCart, playerToCart]);
+  }
+  console.log(shoppingCart);
+
   return (
     <div>
-      <h1>Add new player</h1>
-      <Grid>
-        <PlayerForm onAddPlayer={addPlayer} />
-        <Players>
-          {players.map((player, index) => (
-            <PlayerCard key={index + player} player={player} />
-          ))}
-        </Players>
-      </Grid>
+      <HeaderNavgation />
+      <main>
+        <Switch>
+          <Route exact path="/">
+            <Grid>
+              <PlayerCardsOnly />
+              <Players>
+                {players.map((player, index) => (
+                  <PlayerCard
+                    key={index + player}
+                    player={player}
+                    onAddToShoppingCart={() => addToShoppingCart(player)}
+                  />
+                ))}
+              </Players>
+            </Grid>
+          </Route>
+          <Route path="/player-cards">
+            <h1>Add new player</h1>
+            <Grid>
+              <PlayerForm onAddPlayer={addPlayer} />
+              <Players>
+                {players.map((player, index) => (
+                  <PlayerCard
+                    key={index + player}
+                    player={player}
+                    onAddToShoppingCart={() => addToShoppingCart(player)}
+                  />
+                ))}
+              </Players>
+            </Grid>
+          </Route>
+          <Route path="/cart">
+            <ShoppingCart shoppingCart={shoppingCart} />
+          </Route>
+        </Switch>
+      </main>
     </div>
   );
 }
