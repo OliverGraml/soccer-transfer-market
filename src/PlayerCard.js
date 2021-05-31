@@ -1,13 +1,12 @@
 import styled from 'styled-components/macro';
 import soccerBall from './Images/soccerBall.png';
 
-export default function PlayerCard({player, onAddToShoppingCart}) {
-  /*   switch (player.club) {
-    case 'fc_bayern' :
-      return 'FC Bayern München';
-    case 'man_city' : 
-      return 'Manchester City';
-  } */
+export default function PlayerCard({
+  player,
+  onAddToShoppingCart,
+  onEditPlayer,
+  onDeletePlayer,
+}) {
   return (
     <Card>
       <TopWrapper>
@@ -25,6 +24,8 @@ export default function PlayerCard({player, onAddToShoppingCart}) {
       <p>
         <a href={`mailto:${player.email}`}>{player.email}</a>
       </p>
+      <button onClick={() => onEditPlayer(player)}>Edit the Player</button>
+      <button onClick={() => onDeletePlayer(player)}>Delete Player</button>
     </Card>
   );
 }

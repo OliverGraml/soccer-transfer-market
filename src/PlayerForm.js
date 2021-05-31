@@ -1,9 +1,13 @@
 import styled from 'styled-components/macro';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import Tags from './Tags';
 import validatePlayer from './lib/validation';
 
-export default function PlayerForm({onAddPlayer}) {
+export default function PlayerForm({
+  onAddPlayer,
+  onUpdateAndSavePlayer,
+  playerToEdit,
+}) {
   //function App() {
   const initialPlayerState = {
     name: '',
@@ -18,6 +22,20 @@ export default function PlayerForm({onAddPlayer}) {
 
   const [player, setPlayer] = useState(initialPlayerState);
   const [isError, setIsError] = useState(false);
+  const [clubs, setClubs] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/club')
+      .then((result) => result.json())
+      .then((clubsFromApi) => setClubs(clubsFromApi))
+      .catch((error) => console.error(error));
+  }, []);
+
+  useEffect(() => {
+    if (playerToEdit) {
+      setPlayer(playerToEdit);
+    }
+  }, [playerToEdit]);
 
   function updatePlayer(event) {
     const fieldName = event.target.name;
@@ -34,8 +52,10 @@ export default function PlayerForm({onAddPlayer}) {
     event.preventDefault();
 
     if (validatePlayer(player)) {
-      onAddPlayer(player);
+      playerToEdit ? onUpdateAndSavePlayer(player) : onAddPlayer(player);
       setPlayer(initialPlayerState);
+      //onAddPlayer(player);
+      //setPlayer(initialPlayerState);
       setIsError(false);
     } else {
       setIsError(true);
@@ -53,6 +73,7 @@ export default function PlayerForm({onAddPlayer}) {
 
   return (
     <Form onSubmit={handleFormSubmit}>
+      <h3>{playerToEdit ? 'Edit' : 'Add'} Player</h3>
       {isError && <ErrorBox>You have an error in your form.</ErrorBox>}
       <label>Player name</label>
       <input
@@ -82,9 +103,13 @@ export default function PlayerForm({onAddPlayer}) {
       <label htmlFor="club">Club</label>
       <select id="club" name="club" onChange={updatePlayer} value={player.club}>
         <option value="select"> ---Please Select a Club--- </option>
-        <option value="fc_bayern">FC Bayern München</option>
-        <option value="sv_werder">SV Werder Bremen</option>
-        <option value="vfb_stuttgart">VfV Stuttgart</option>
+        {clubs &&
+          clubs.length > 0 &&
+          clubs.map((club) => (
+            <option key={club._id} value={club.clubname}>
+              {club.clubname}
+            </option>
+          ))}
       </select>
 
       <label htmlFor="position">Position</label>
@@ -128,11 +153,14 @@ export default function PlayerForm({onAddPlayer}) {
         tags={player.skills}
       />
       <label htmlFor="email">Contact (email)</label>
-      <input type="text" name="email" onChange={updatePlayer} />
+      <input
+        type="text"
+        name="email"
+        onChange={updatePlayer}
+        value={player.email}
+      />
       <Buttons>
-        <Button isPrimary type="submit">
-          Add Player
-        </Button>
+        <Button isPrimary>{playerToEdit ? 'Update' : 'Add'} player</Button>
         <Button onClick={() => setPlayer(initialPlayerState)} type="reset">
           Cancel
         </Button>
